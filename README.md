@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:3FA9F5,100:F5B73F&height=190&section=header&text=Lang%20Helper%20Bot&fontSize=52&fontColor=ffffff&fontAlignY=38&desc=Correct%20your%20English%20%C2%B7%20Translate%20Hindi%20%26%20Hinglish%20%C2%B7%20by%20text%20or%20voice&descSize=16&descAlignY=60" width="100%"/>
+# 🌐 Lang Helper Bot
 
-<br/>
+### Correct your English &nbsp;·&nbsp; Translate Hindi &amp; Hinglish &nbsp;·&nbsp; by text or voice
 
 ![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Telegram](https://img.shields.io/badge/Telegram_Bot-webhooks-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)
@@ -237,6 +237,10 @@ Everything platform-specific — downloading files, sending replies, webhooks �
 
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:F5B73F,100:3FA9F5&height=110&section=footer&text=translate%20·%20transcribe%20·%20synthesize%20·%20correct&fontSize=15&fontColor=ffffff&fontAlignY=72" width="100%"/>
+---
+
+**translate &nbsp;·&nbsp; transcribe &nbsp;·&nbsp; synthesize &nbsp;·&nbsp; correct**
+
+<sub>Built one stub at a time.</sub>
 
 </div>

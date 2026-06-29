@@ -1,0 +1,6 @@
+python-telegram-bot[webhooks]
+python-dotenv
+deep-translator
+gTTS
+groq
+gladiaio-sdk

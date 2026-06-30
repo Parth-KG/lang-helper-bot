@@ -21,7 +21,7 @@ def correct_english(text: str) -> str:
     return response.choices[0].message.content.strip()
 
 def transcribe_audio(file_path: str) -> str:
-    result = gladia.transcribe(file_path)
+    result = gladia.transcribe(file_path, options={"language_config": {"languages": ["en"]}})
     return result.result.transcription.full_transcript.strip()
     
 def to_english(text: str) -> str:

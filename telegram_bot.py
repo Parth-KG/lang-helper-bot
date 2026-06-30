@@ -16,17 +16,14 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file = await context.bot.get_file(voice.file_id)
 
     in_path = f"/tmp/{voice.file_id}.ogg"
-    out_path = f"/tmp/{voice.file_id}_reply.mp3"
 
     try:
         await file.download_to_drive(in_path)
-
-                text = transcribe_audio(in_path)
+        text = transcribe_audio(in_path)
         await update.message.reply_text(text)
     finally:
-        for path in (in_path, out_path):
-            if os.path.exists(path):
-                os.remove(path)
+        if os.path.exists(in_path):
+            os.remove(in_path)
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_text = update.message.text

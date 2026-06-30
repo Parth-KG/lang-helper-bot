@@ -22,7 +22,7 @@ def correct_english(text: str) -> str:
 
 def transcribe_audio(file_path: str) -> str:
     result = gladia.transcribe(file_path)
-    return "T ATTRS: " + ", ".join(a for a in dir(result.result.transcription) if not a.startswith("_"))
+    return result.result.transcription.full_transcript.strip()
     
 def to_english(text: str) -> str:
     return GoogleTranslator(source="auto", target="en").translate(text)

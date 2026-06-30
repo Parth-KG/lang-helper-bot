@@ -22,8 +22,8 @@ def correct_english(text: str) -> str:
 
 def transcribe_audio(file_path: str) -> str:
     result = gladia.transcribe(file_path)
-    return "RESULT ATTRS: " + ", ".join(a for a in dir(result.result) if not a.startswith("_"))              # temporary — just return something
-
+    return "T ATTRS: " + ", ".join(a for a in dir(result.result.transcription) if not a.startswith("_"))
+    
 def to_english(text: str) -> str:
     return GoogleTranslator(source="auto", target="en").translate(text)
 

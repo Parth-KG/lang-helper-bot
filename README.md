@@ -35,6 +35,20 @@ One brain. Three chat apps. Text and voice.
 
 ---
 
+## 🎮 Try it live
+
+Tota is deployed and running — try it on any platform:
+
+| Platform | How to start |
+| :-- | :-- |
+| 📨 **Telegram** | Message [**@Lang_helper_bot**](https://t.me/Lang_helper_bot) and say anything |
+| 🟢 **WhatsApp** | Send `join slabs-desert` to **+1 415 523 8886**, then message it |
+| 🎮 **Discord** | [**Add Tota to your server**](https://discord.com/oauth2/authorize?client_id=1521927230601826385&permissions=2147485696&integration_type=0&scope=applications.commands+bot), then run `/use text: ...` |
+
+<sub>⏳ Bots run on a free tier and sleep when idle — the first message after a pause may take ~50s to wake. On Discord, if <code>/use</code> says "did not respond," just run it once more.</sub>
+
+---
+
 ## ✨ What it does
 
 <table>
@@ -71,7 +85,7 @@ All language logic lives in a single platform-agnostic core shared across every 
 
 ---
 
-## 📲 Live on three platforms
+## 📲 The platforms
 
 <div align="center">
 

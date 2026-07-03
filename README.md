@@ -1,42 +1,33 @@
 <div align="center">
 
-# 🌐 Lang Helper Bot
+<img src="assets/banner.png" alt="Lang Helper Bot — Tota" width="720"/>
 
-### Correct your English &nbsp;·&nbsp; Translate Hindi &amp; Hinglish &nbsp;·&nbsp; by text or voice
+<br/><br/>
 
 ![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Telegram](https://img.shields.io/badge/Telegram_Bot-webhooks-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)
-![Voice](https://img.shields.io/badge/Voice-in_%2B_out-FF7BB0?style=for-the-badge&logo=audiomack&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Deploying-F5B73F?style=for-the-badge)
+![Telegram](https://img.shields.io/badge/Telegram-Live-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)
+![WhatsApp](https://img.shields.io/badge/WhatsApp-Live-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)
+![Discord](https://img.shields.io/badge/Discord-Live-5865F2?style=for-the-badge&logo=discord&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-F5B73F?style=for-the-badge)
+
+### Fix your English &nbsp;·&nbsp; Translate Hindi &amp; Hinglish &nbsp;·&nbsp; by text *or* voice
 
 </div>
 
-<p align="center">
-  <i>Send it a message and it replies corrected. Send it a voice note and it talks back.</i>
-</p>
-
 ---
-
-## ✨ Features
 
 <table>
 <tr>
-<td width="50%" valign="top">
-
-### 📝 &nbsp;Corrects English
-Fixes grammar, spelling, and clunky phrasing — returns clean, natural text.
-
-### 🔁 &nbsp;Translates to English
-Hindi, **Hinglish** (Roman script), or plain English all come back as polished English.
-
+<td width="170" align="center">
+<img src="assets/mascot.png" alt="Tota the parrot" width="150"/>
 </td>
-<td width="50%" valign="top">
+<td>
 
-### 🎙️ &nbsp;Understands voice notes
-Transcribes what you said, runs it through the engine, and **replies with a voice note**.
+### 🦜 &nbsp;Meet Tota
 
-### 🧩 &nbsp;Reusable core
-All language logic lives in one platform-agnostic file — ready to power WhatsApp or a web app next.
+<b>Tota</b> (Hindi for <i>parrot</i>) is your multilingual sidekick. Send a message or a voice note in <b>English</b>, <b>Hindi</b>, or <b>Hinglish</b> — Tota replies with clean, corrected English. Just like a parrot, it listens, understands, and speaks it back the right way.
+
+One brain. Three chat apps. Text and voice.
 
 </td>
 </tr>
@@ -44,13 +35,97 @@ All language logic lives in one platform-agnostic file — ready to power WhatsA
 
 ---
 
-## 🛠 Built with
+## ✨ What it does
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 📝 Corrects English
+Fixes grammar, spelling, and awkward phrasing — returns natural, polished text.
+
+### 🔁 Translates to English
+Hindi, **Hinglish** (Roman script), or English all come back as clean English.
+
+</td>
+<td width="50%" valign="top">
+
+### 🎙️ Speaks &amp; listens
+Send a voice note — Tota transcribes it, processes it, and **replies with a voice note** of its own.
+
+### 🧩 One engine, everywhere
+All language logic lives in a single platform-agnostic core shared across every app.
+
+</td>
+</tr>
+</table>
+
+### 💬 See it in action
+
+| You send | 🦜 Tota replies |
+| :-- | :-- |
+| `kaisa hai tu` &nbsp;<sub>(Hindi)</sub> | How are you? |
+| `mujhe ye movie bahut pasand aayi` &nbsp;<sub>(Hinglish)</sub> | I really liked this movie. |
+| `he go to school everyday` | He goes to school every day. |
+| 🎙️ &nbsp;a voice note | 🔊 &nbsp;a corrected voice note |
+
+---
+
+## 📲 Live on three platforms
 
 <div align="center">
 
-<img src="https://skillicons.dev/icons?i=python,git,github&theme=dark" />
+| <img src="https://img.shields.io/badge/-Telegram-26A5E4?style=flat-square&logo=telegram&logoColor=white"/> | <img src="https://img.shields.io/badge/-WhatsApp-25D366?style=flat-square&logo=whatsapp&logoColor=white"/> | <img src="https://img.shields.io/badge/-Discord-5865F2?style=flat-square&logo=discord&logoColor=white"/> |
+| :--: | :--: | :--: |
+| Text **+ voice** | Text **+ voice** | Text, on `@mention` |
+| webhook | webhook + Twilio | gateway bot |
 
-<br/><br/>
+</div>
+
+---
+
+## 🔧 How it works
+
+The whole project follows one rule: **the engine never imports a chat platform.** Each app is a thin *adapter* that speaks its platform's language; they all call the same *engine*. That's why voice and text share one pipeline — and why adding a new app is "just another adapter."
+
+```mermaid
+flowchart LR
+    classDef adapter fill:#10243d,stroke:#3FA9F5,stroke-width:2px,color:#dbe9ff
+    classDef engine fill:#2c2510,stroke:#F5B73F,stroke-width:2px,color:#ffe9bf
+    classDef accent fill:#241634,stroke:#C792EA,stroke-width:2px,color:#f0e3ff
+
+    TG["📨 Telegram"]
+    WA["🟢 WhatsApp"]
+    DC["🎮 Discord"]
+
+    subgraph E["⚙️ engine.py"]
+        TA["transcribe_audio"]
+        PT["process_text"]
+        TE["to_english"]
+        CE["correct_english"]
+        SS["synthesize_speech"]
+    end
+
+    TG --> PT
+    WA --> PT
+    DC --> PT
+    TG -. voice .-> TA -.-> PT
+    WA -. voice .-> TA
+    PT --> TE --> CE
+    CE --> SS
+
+    class TG,WA,DC adapter
+    class TA,SS accent
+    class PT,TE,CE engine
+```
+
+**The flow:** a message (or transcribed voice) enters `process_text` → `to_english` auto-detects and converts Hindi / Hinglish / English to English → `correct_english` polishes the grammar → the result is sent back as text, or spoken back as voice.
+
+---
+
+## 🛠 Tech stack
+
+<div align="center">
 
 ![Translation](https://img.shields.io/badge/Translation-Google-4285F4?style=flat-square&logo=googletranslate&logoColor=white)
 ![Grammar](https://img.shields.io/badge/Grammar-Groq_·_Llama_3.3_70B-F55036?style=flat-square)
@@ -61,53 +136,15 @@ All language logic lives in one platform-agnostic file — ready to power WhatsA
 
 | Job | Tool | Notes |
 | :-- | :-- | :-- |
-| 🤖 &nbsp;Bot framework | **python-telegram-bot** | webhook mode for deployment |
-| 🌍 &nbsp;Translation | **deep-translator** (Google) | auto-detect → English · **no key** |
-| ✍️ &nbsp;Grammar correction | **Groq** (Llama 3.3 70B) | hosted, fast |
+| 🤖 &nbsp;Telegram | **python-telegram-bot** | webhook mode |
+| 🟢 &nbsp;WhatsApp | **Flask + Twilio** | webhook, media over URL |
+| 🎮 &nbsp;Discord | **discord.py** | gateway, `@mention` triggered |
+| 🌍 &nbsp;Translation | **deep-translator** (Google) | auto-detect → English · no key |
+| ✍️ &nbsp;Grammar | **Groq** (Llama 3.3 70B) | hosted, fast |
 | 🎧 &nbsp;Speech → text | **Gladia** | hosted transcription |
 | 🗣️ &nbsp;Text → speech | **gTTS** | Google Text-to-Speech |
 
-> 💡 &nbsp;No local ML models and no system dependencies — the bot is a lightweight script, so hosting stays cheap and simple.
-
----
-
-## 🔧 How it works
-
-Two files, one clean split: the **adapter** only talks to Telegram, the **engine** only does language work. Text and voice funnel into the *same* engine call.
-
-```mermaid
-flowchart LR
-    classDef adapter fill:#10243d,stroke:#3FA9F5,stroke-width:2px,color:#dbe9ff
-    classDef engine fill:#2c2510,stroke:#F5B73F,stroke-width:2px,color:#ffe9bf
-    classDef accent fill:#241634,stroke:#C792EA,stroke-width:2px,color:#f0e3ff
-
-    subgraph A["📲 telegram_bot.py · adapter"]
-        TM["💬 Text message"]
-        VM["🎙️ Voice note"]
-        RT["↩️ reply_text"]
-        RV["🔊 reply_voice"]
-    end
-
-    subgraph E["⚙️ engine.py · engine"]
-        TA["transcribe_audio"]
-        PT["process_text"]
-        TE["to_english"]
-        CE["correct_english"]
-        SS["synthesize_speech"]
-    end
-
-    TM --> PT
-    VM --> TA --> PT
-    PT --> TE --> CE
-    CE --> RT
-    CE --> SS --> RV
-
-    class TM,VM,RT,RV adapter
-    class TA,SS accent
-    class PT,TE,CE engine
-```
-
-**In words:** a message (or transcribed voice) enters `process_text` → `to_english` auto-detects and converts Hindi / Hinglish / English to English → `correct_english` polishes the grammar → the result is sent back as text, or spoken back as a voice note.
+> 💡 No local ML models, no system dependencies — every bot is a lightweight script, so hosting stays cheap and simple.
 
 ---
 
@@ -115,16 +152,18 @@ flowchart LR
 
 ```
 Lang_Helper/
-├── 📄 telegram_bot.py     # adapter — all Telegram I/O (handlers, webhook)
-├── 🧠 engine.py           # engine — language logic, no Telegram knowledge
-├── 📦 requirements.txt    # Python dependencies
-├── 🔐 .env                # secrets — NEVER committed
+├── 🧠 engine.py          # the brain — language logic, platform-agnostic
+├── 📨 telegram_bot.py    # adapter — Telegram (text + voice)
+├── 🟢 whatsapp_bot.py    # adapter — WhatsApp via Twilio (text + voice)
+├── 🎮 discord_bot.py     # adapter — Discord (text, @mention)
+├── 📦 requirements.txt
+├── 🔐 .env.example       # secrets — never committed
 └── 🙈 .gitignore
 ```
 
 ---
 
-## 🚀 Getting started
+## 🚀 Run it yourself
 
 <details>
 <summary><b>① &nbsp;Clone &amp; install</b></summary>
@@ -137,16 +176,6 @@ cd lang-helper-bot
 pip install -r requirements.txt
 ```
 
-**`requirements.txt`**
-```
-python-telegram-bot[webhooks]
-python-dotenv
-deep-translator
-gTTS
-groq
-gladiaio-sdk
-```
-
 </details>
 
 <details>
@@ -154,33 +183,49 @@ gladiaio-sdk
 
 <br/>
 
-Create a `.env` in the project root (it's git-ignored — never commit it):
+Create a `.env` in the project root (it's git-ignored):
 
 ```env
-TELEGRAM_TOKEN=your_botfather_token
+# core
 GROQ_API_KEY=your_groq_key
 GLADIA_API_KEY=your_gladia_key
+
+# telegram
+TELEGRAM_TOKEN=your_botfather_token
+WEBHOOK_URL=https://your-app.onrender.com
+
+# whatsapp (twilio)
+TWILIO_ACCOUNT_SID=your_sid
+TWILIO_AUTH_TOKEN=your_token
+PUBLIC_URL=https://your-public-url
+
+# discord
+DISCORD_TOKEN=your_discord_token
 ```
 
-| Variable | Required | Where it comes from |
-| :-- | :--: | :-- |
-| `TELEGRAM_TOKEN` | ✅ | [@BotFather](https://t.me/BotFather) |
-| `GROQ_API_KEY` | ✅ | [console.groq.com](https://console.groq.com) |
-| `GLADIA_API_KEY` | ✅ | [gladia.io](https://www.gladia.io) |
+| Key | For | From |
+| :-- | :-- | :-- |
+| `GROQ_API_KEY` | grammar | [console.groq.com](https://console.groq.com) |
+| `GLADIA_API_KEY` | transcription | [gladia.io](https://www.gladia.io) |
+| `TELEGRAM_TOKEN` | Telegram | [@BotFather](https://t.me/BotFather) |
+| `TWILIO_*` | WhatsApp | [twilio.com](https://www.twilio.com) |
+| `DISCORD_TOKEN` | Discord | [Developer Portal](https://discord.com/developers/applications) |
 
-> Translation needs no key.
+Translation needs no key.
 
 </details>
 
 <details>
-<summary><b>③ &nbsp;Run it</b></summary>
+<summary><b>③ &nbsp;Launch a bot</b></summary>
 
 <br/>
 
-For local testing, run in polling mode (no public URL needed), then message your bot — type a clunky sentence or send a voice note.
+Each adapter runs on its own:
 
 ```bash
-python telegram_bot.py
+python telegram_bot.py     # Telegram
+python whatsapp_bot.py     # WhatsApp (Flask, port 5001)
+python discord_bot.py      # Discord
 ```
 
 </details>
@@ -189,58 +234,35 @@ python telegram_bot.py
 
 ## ☁️ Deployment
 
-Runs as a **webhook** (Telegram pushes updates to a public URL) on **Render**.
+All three run in the cloud:
 
-<details>
-<summary><b>Deploy steps</b></summary>
+- **Telegram** — webhook web service; registers itself with Telegram on startup.
+- **WhatsApp** — Flask webhook web service; Twilio posts incoming messages and fetches voice replies over a public URL.
+- **Discord** — a gateway worker; it connects *out* to Discord, so no public URL needed.
 
-<br/>
-
-1. Push this repo to **GitHub**.
-2. On [Render](https://render.com), create a **Web Service** from the repo.
-3. Add `TELEGRAM_TOKEN`, `GROQ_API_KEY`, `GLADIA_API_KEY` under **Environment** (never in code).
-4. Render builds from `requirements.txt` and gives you a public HTTPS URL.
-5. The bot registers its webhook with Telegram on startup.
-
-> The `[webhooks]` extra on `python-telegram-bot` is already in `requirements.txt`.
-
-</details>
+Secrets live in the host's environment variables, never in the repo.
 
 ---
 
-## 🗺 Roadmap
+## 🧠 Design philosophy
 
-| | Milestone |
-| :--: | :-- |
-| ✅ | English grammar correction |
-| ✅ | Hindi / Hinglish / English → English |
-| ✅ | Voice in → voice out |
-| ✅ | Temp-file cleanup per voice note |
-| 🔧 | Deploy on Render (webhook) — *in progress* |
-| 🔜 | Web frontend |
-| 🔜 | WhatsApp adapter (same engine, new adapter) |
+```
+                    engine.py  ·  the brain
+                  /      |       \       
+       telegram_bot  whatsapp_bot  discord_bot   
+          webhook    Flask+Twilio    gateway    
+```
+
+Everything platform-specific — downloads, replies, webhooks — lives in its adapter. Everything about *language* lives in `engine.py` and takes plain strings in and out. Add a platform, write one adapter, reuse the whole brain. Nothing gets rewritten.
 
 ---
-
-## 🧠 Design notes
-
-The whole project follows one rule: **the engine never imports Telegram.**
-
-Everything platform-specific — downloading files, sending replies, webhooks — lives in `telegram_bot.py`. Everything about *language* lives in `engine.py` and takes plain strings in and out. That's why voice and text share the same pipeline, and why a future WhatsApp bot or web frontend is *just another adapter* calling the same `process_text` — no logic rewritten.
-
-```
-                 engine.py  ·  the brain
-               /       |        \
-   telegram_bot.py    web?      whatsapp?
-       webhook       frontend    adapter
-```
 
 <div align="center">
 
----
+<img src="assets/mascot.png" alt="Tota" width="90"/>
 
-**translate &nbsp;·&nbsp; transcribe &nbsp;·&nbsp; synthesize &nbsp;·&nbsp; correct**
+<sub><b>Tota</b> · translate · transcribe · synthesize · correct</sub>
 
-<sub>Built one stub at a time.</sub>
+<sub>MIT Licensed</sub>
 
 </div>

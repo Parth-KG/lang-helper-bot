@@ -18,14 +18,15 @@ def correct_english(text: str) -> str:
             {"role": "user", "content": f"Text to correct:\n\"\"\"\n{text}\n\"\"\""},
         ],
     )
-    return response.choices[0].message.content.strip()
+    return response.choices[0].message.content.strip().strip('"').strip()
 
 def transcribe_audio(file_path: str) -> str:
     result = gladia.transcribe(file_path, options={"language_config": {"languages": ["en"]}})
     return result.result.transcription.full_transcript.strip()
     
 def to_english(text: str) -> str:
-    return GoogleTranslator(source="auto", target="en").translate(text)
+    result = GoogleTranslator(source="auto", target="en").translate(text)
+    return result.strip().strip('"').strip()
 
 def synthesize_speech(text: str, output_path: str) -> str:
     tts = gTTS(text=text, lang="en")

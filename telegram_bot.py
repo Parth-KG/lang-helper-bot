@@ -7,9 +7,14 @@ from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, Con
 
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN")
+if not TOKEN:
+    raise SystemExit("TELEGRAM_TOKEN is missing. Add it to your .env file.")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Hi! Send me a message and I'll reply.")
+    await update.message.reply_text(
+        "Hi! I'm Tota 🦜 Send me a message or voice note in English, Hindi, or Hinglish "
+        "and I'll reply with clean, corrected English."
+    )
 
 async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     voice = update.message.voice
@@ -25,16 +30,22 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
         synthesize_speech(result["output"], out_path)
         with open(out_path, "rb") as audio:
             await update.message.reply_voice(audio)
+    except Exception as e:
+        print(f"Error handling voice: {e}")
+        await update.message.reply_text("⚠️ Oops, I couldn't process that. Try again in a moment.")
     finally:
         for path in (in_path, out_path):
             if os.path.exists(path):
                 os.remove(path)
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_text = update.message.text
-    result = process_text(user_text)
-
-    await update.message.reply_text(result["output"])
+    try:
+        user_text = update.message.text
+        result = process_text(user_text)
+        await update.message.reply_text(result["output"])
+    except Exception as e:
+        print(f"Error handling message: {e}")
+        await update.message.reply_text("⚠️ Oops, I couldn't process that. Try again in a moment.")
 
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(MessageHandler(filters.VOICE, handle_voice))

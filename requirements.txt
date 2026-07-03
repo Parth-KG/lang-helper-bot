@@ -4,3 +4,7 @@ deep-translator
 gTTS
 groq
 gladiaio-sdk
+flask
+twilio
+requests
+discord.py

@@ -77,8 +77,8 @@ All language logic lives in a single platform-agnostic core shared across every 
 
 | <img src="https://img.shields.io/badge/-Telegram-26A5E4?style=flat-square&logo=telegram&logoColor=white"/> | <img src="https://img.shields.io/badge/-WhatsApp-25D366?style=flat-square&logo=whatsapp&logoColor=white"/> | <img src="https://img.shields.io/badge/-Discord-5865F2?style=flat-square&logo=discord&logoColor=white"/> |
 | :--: | :--: | :--: |
-| Text **+ voice** | Text **+ voice** | Text, on `@mention` |
-| webhook | webhook + Twilio | gateway bot |
+| Text **+ voice** | Text **+ voice** | Text, via `/use` |
+| webhook | webhook + Twilio | slash-command webhook |
 
 </div>
 
@@ -96,7 +96,7 @@ flowchart LR
 
     TG["📨 Telegram"]
     WA["🟢 WhatsApp"]
-    DC["🎮 Discord"]
+    DC["🎮 Discord · /use"]
 
     subgraph E["⚙️ engine.py"]
         TA["transcribe_audio"]
@@ -136,9 +136,9 @@ flowchart LR
 
 | Job | Tool | Notes |
 | :-- | :-- | :-- |
-| 🤖 &nbsp;Telegram | **python-telegram-bot** | webhook mode |
+| 📨 &nbsp;Telegram | **python-telegram-bot** | webhook, text + voice |
 | 🟢 &nbsp;WhatsApp | **Flask + Twilio** | webhook, media over URL |
-| 🎮 &nbsp;Discord | **discord.py** | gateway, `@mention` triggered |
+| 🎮 &nbsp;Discord | **Flask + PyNaCl** | `/use` slash command, signed webhook |
 | 🌍 &nbsp;Translation | **deep-translator** (Google) | auto-detect → English · no key |
 | ✍️ &nbsp;Grammar | **Groq** (Llama 3.3 70B) | hosted, fast |
 | 🎧 &nbsp;Speech → text | **Gladia** | hosted transcription |
@@ -152,12 +152,13 @@ flowchart LR
 
 ```
 Lang_Helper/
-├── 🧠 engine.py          # the brain — language logic, platform-agnostic
-├── 📨 telegram_bot.py    # adapter — Telegram (text + voice)
-├── 🟢 whatsapp_bot.py    # adapter — WhatsApp via Twilio (text + voice)
-├── 🎮 discord_bot.py     # adapter — Discord (text, @mention)
+├── 🧠 engine.py             # the brain — language logic, platform-agnostic
+├── 📨 telegram_bot.py       # adapter — Telegram (text + voice)
+├── 🟢 whatsapp_bot.py       # adapter — WhatsApp via Twilio (text + voice)
+├── 🎮 discord_bot.py        # adapter — Discord (/use slash command, webhook)
+├── 🧩 register_command.py   # one-time — registers /use with Discord
 ├── 📦 requirements.txt
-├── 🔐 .env.example       # secrets — never committed
+├── 🔐 .env.example          # template for your secrets (real .env is git-ignored)
 └── 🙈 .gitignore
 ```
 
@@ -183,24 +184,30 @@ pip install -r requirements.txt
 
 <br/>
 
-Create a `.env` in the project root (it's git-ignored):
+Copy the template and fill in your values:
+
+```bash
+cp .env.example .env
+```
 
 ```env
 # core
-GROQ_API_KEY=your_groq_key
-GLADIA_API_KEY=your_gladia_key
+GROQ_API_KEY=
+GLADIA_API_KEY=
 
 # telegram
-TELEGRAM_TOKEN=your_botfather_token
-WEBHOOK_URL=https://your-app.onrender.com
+TELEGRAM_TOKEN=
+WEBHOOK_URL=
 
 # whatsapp (twilio)
-TWILIO_ACCOUNT_SID=your_sid
-TWILIO_AUTH_TOKEN=your_token
-PUBLIC_URL=https://your-public-url
+TWILIO_ACCOUNT_SID=
+TWILIO_AUTH_TOKEN=
+PUBLIC_URL=
 
 # discord
-DISCORD_TOKEN=your_discord_token
+DISCORD_TOKEN=
+DISCORD_APP_ID=
+DISCORD_PUBLIC_KEY=
 ```
 
 | Key | For | From |
@@ -209,7 +216,7 @@ DISCORD_TOKEN=your_discord_token
 | `GLADIA_API_KEY` | transcription | [gladia.io](https://www.gladia.io) |
 | `TELEGRAM_TOKEN` | Telegram | [@BotFather](https://t.me/BotFather) |
 | `TWILIO_*` | WhatsApp | [twilio.com](https://www.twilio.com) |
-| `DISCORD_TOKEN` | Discord | [Developer Portal](https://discord.com/developers/applications) |
+| `DISCORD_*` | Discord | [Developer Portal](https://discord.com/developers/applications) |
 
 Translation needs no key.
 
@@ -220,13 +227,13 @@ Translation needs no key.
 
 <br/>
 
-Each adapter runs on its own:
-
 ```bash
-python telegram_bot.py     # Telegram
-python whatsapp_bot.py     # WhatsApp (Flask, port 5001)
-python discord_bot.py      # Discord
+python telegram_bot.py       # Telegram
+gunicorn whatsapp_bot:app    # WhatsApp  (webhook — needs a public URL)
+gunicorn discord_bot:app     # Discord   (webhook — needs a public URL)
 ```
+
+Telegram and WhatsApp handle voice; Discord is text via `/use`. The two webhook apps need a public URL (deploy them, or tunnel with ngrok for local testing). For Discord, register the command once with `python register_command.py`.
 
 </details>
 
@@ -234,26 +241,26 @@ python discord_bot.py      # Discord
 
 ## ☁️ Deployment
 
-All three run in the cloud:
+All three are deployed and running in the cloud:
 
-- **Telegram** — webhook web service; registers itself with Telegram on startup.
-- **WhatsApp** — Flask webhook web service; Twilio posts incoming messages and fetches voice replies over a public URL.
-- **Discord** — a gateway worker; it connects *out* to Discord, so no public URL needed.
+- **Telegram** — webhook web service; registers its webhook with Telegram on startup.
+- **WhatsApp** — Flask webhook web service; Twilio posts incoming messages and fetches voice replies from a public URL.
+- **Discord** — Flask webhook web service handling Discord **Interactions**; every `/use` is a signed HTTP request, verified with the app's public key, answered with a deferred reply while the engine works.
 
-Secrets live in the host's environment variables, never in the repo.
+Secrets live in each host's environment variables, never in the repo.
 
 ---
 
 ## 🧠 Design philosophy
 
 ```
-                    engine.py  ·  the brain
-                  /      |       \       
-       telegram_bot  whatsapp_bot  discord_bot   
-          webhook    Flask+Twilio    gateway    
+                     engine.py  ·  the brain
+                   /       |        \
+        telegram_bot   whatsapp_bot   discord_bot
+          webhook      Flask+Twilio     webhook
 ```
 
-Everything platform-specific — downloads, replies, webhooks — lives in its adapter. Everything about *language* lives in `engine.py` and takes plain strings in and out. Add a platform, write one adapter, reuse the whole brain. Nothing gets rewritten.
+Everything platform-specific — downloads, replies, signatures, webhooks — lives in its adapter. Everything about *language* lives in `engine.py` and takes plain strings in and out. Add a platform, write one adapter, reuse the whole brain. Nothing gets rewritten.
 
 ---
 

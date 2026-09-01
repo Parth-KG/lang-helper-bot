@@ -12,7 +12,7 @@ gladia = GladiaClient(api_key=os.getenv("GLADIA_API_KEY")).prerecorded()
 
 def correct_english(text: str) -> str:
     response = client.chat.completions.create(
-        model=os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
+        model=os.getenv("GROQ_MODEL", "openai/gpt-oss-20b"),
         reasoning_effort="low",
         messages=[
             {"role": "system",

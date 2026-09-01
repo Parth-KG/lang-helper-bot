@@ -12,7 +12,7 @@ gladia = GladiaClient(api_key=os.getenv("GLADIA_API_KEY")).prerecorded()
 
 def correct_english(text: str) -> str:
     response = client.chat.completions.create(
-        model=os.getenv("GROQ_MODEL", "openai/gpt-oss-20b"),
+        model=os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
         reasoning_effort="low",
         messages=[
             {"role": "system",
@@ -25,7 +25,7 @@ def correct_english(text: str) -> str:
 def transcribe_audio(file_path: str) -> str:
     result = gladia.transcribe(file_path, options={"language_config": {"languages": ["en"]}})
     return result.result.transcription.full_transcript.strip()
-    
+
 def to_english(text: str) -> str:
     result = GoogleTranslator(source="auto", target="en").translate(text)
     return result.strip().strip('"').strip()
@@ -42,11 +42,16 @@ def process_text(text: str) -> dict:
     output = correct_english(english)
     t2 = time.perf_counter()
 
+    translate_ms = round((t1 - t0) * 1000)
+    correct_ms = round((t2 - t1) * 1000)
+    total_ms = round((t2 - t0) * 1000)
+
     return {
-        "output": output,
+        "output": f"{output}\n\nLatency: {total_ms} ms (translate {translate_ms} · correct {correct_ms})",
+        "text": output,
         "timings": {
-            "to_english_ms": round((t1 - t0) * 1000, 1),
-            "correct_english_ms": round((t2 - t1) * 1000, 1),
-            "total_ms": round((t2 - t0) * 1000, 1),
+            "translate_ms": translate_ms,
+            "correct_ms": correct_ms,
+            "total_ms": total_ms,
         },
     }

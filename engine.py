@@ -1,4 +1,5 @@
 import os
+import time
 from deep_translator import GoogleTranslator
 from gtts import gTTS
 from groq import Groq
@@ -11,7 +12,7 @@ gladia = GladiaClient(api_key=os.getenv("GLADIA_API_KEY")).prerecorded()
 
 def correct_english(text: str) -> str:
     response = client.chat.completions.create(
-        model="openai/gpt-oss-120b",
+        model=os.getenv("GROQ_MODEL", "openai/gpt-oss-20b"),
         reasoning_effort="low",
         messages=[
             {"role": "system",
@@ -35,9 +36,17 @@ def synthesize_speech(text: str, output_path: str) -> str:
     return output_path
 
 def process_text(text: str) -> dict:
+    t0 = time.perf_counter()
     english = to_english(text)
+    t1 = time.perf_counter()
     output = correct_english(english)
+    t2 = time.perf_counter()
 
     return {
-        "output": output
+        "output": output,
+        "timings": {
+            "to_english_ms": round((t1 - t0) * 1000, 1),
+            "correct_english_ms": round((t2 - t1) * 1000, 1),
+            "total_ms": round((t2 - t0) * 1000, 1),
+        },
     }

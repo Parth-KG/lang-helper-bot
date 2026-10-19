@@ -3,6 +3,7 @@ import time
 import uuid
 import requests
 from flask import Flask, request, send_from_directory
+from twilio.request_validator import RequestValidator
 from twilio.twiml.messaging_response import MessagingResponse
 from dotenv import load_dotenv
 from engine import process_text, transcribe_audio, synthesize_speech
@@ -15,6 +16,11 @@ PUBLIC_URL = os.getenv("PUBLIC_URL")
 
 if not all([TWILIO_SID, TWILIO_TOKEN, PUBLIC_URL]):
     raise SystemExit("Missing Twilio env vars. Check TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and PUBLIC_URL in your .env.")
+
+# Twilio signs each webhook request; anything unsigned or signed for another URL is refused,
+# so a stranger who finds the URL can't spend the Groq and Gladia credits.
+validator = RequestValidator(TWILIO_TOKEN)
+WEBHOOK_URL = f"{PUBLIC_URL.rstrip('/')}/whatsapp"
 
 AUDIO_DIR = "/tmp/wa_audio"
 os.makedirs(AUDIO_DIR, exist_ok=True)
@@ -32,6 +38,10 @@ def cleanup_old_audio(max_age_seconds=600):
 
 @app.route("/whatsapp", methods=["POST"])
 def whatsapp():
+    signature = request.headers.get("X-Twilio-Signature", "")
+    if not validator.validate(WEBHOOK_URL, request.form, signature):
+        return "invalid signature", 403
+        
     cleanup_old_audio()
 
     resp = MessagingResponse()

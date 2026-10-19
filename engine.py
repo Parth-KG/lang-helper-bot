@@ -47,7 +47,7 @@ def process_text(text: str) -> dict:
     total_ms = round((t2 - t0) * 1000)
 
     return {
-        "output": f"{output}\n\nLatency: {total_ms} ms (translate {translate_ms} · correct {correct_ms})",
+        "output": output,
         "text": output,
         "timings": {
             "translate_ms": translate_ms,

@@ -7,6 +7,5 @@ gladiaio-sdk
 flask
 twilio
 requests
-discord.py
 pynacl
 gunicorn

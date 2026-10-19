@@ -25,7 +25,7 @@
 
 ### 🦜 &nbsp;Meet Tota
 
-<b>Tota</b> (Hindi for <i>parrot</i>) is your multilingual sidekick. Send a message or a voice note in <b>English</b>, <b>Hindi</b>, or <b>Hinglish</b> — Tota replies with clean, corrected English. Just like a parrot, it listens, understands, and speaks it back the right way.
+<b>Tota</b> (Hindi for <i>parrot</i>) is your multilingual sidekick. Type in <b>English</b>, <b>Hindi</b>, or <b>Hinglish</b>, or send an English voice note — Tota replies with clean, corrected English. Just like a parrot, it listens, understands, and speaks it back the right way.
 
 One brain. Three chat apps. Text and voice.
 
@@ -65,7 +65,7 @@ Hindi, **Hinglish** (Roman script), or English all come back as clean English.
 <td width="50%" valign="top">
 
 ### 🎙️ Speaks &amp; listens
-Send a voice note — Tota transcribes it, processes it, and **replies with a voice note** of its own.
+Send a voice note — Tota transcribes it, processes it, and **replies with a voice note** of its own. Voice notes are transcribed as English for now.
 
 ### 🧩 One engine, everywhere
 All language logic lives in a single platform-agnostic core shared across every app.
@@ -142,7 +142,7 @@ flowchart LR
 <div align="center">
 
 ![Translation](https://img.shields.io/badge/Translation-Google-4285F4?style=flat-square&logo=googletranslate&logoColor=white)
-![Grammar](https://img.shields.io/badge/Grammar-Groq_·_Llama_3.3_70B-F55036?style=flat-square)
+![Grammar](https://img.shields.io/badge/Grammar-Groq_·_GPT--OSS_20B-F55036?style=flat-square)
 ![Speech to Text](https://img.shields.io/badge/Speech→Text-Gladia-7C5CFF?style=flat-square)
 ![Text to Speech](https://img.shields.io/badge/Text→Speech-gTTS-34A853?style=flat-square&logo=google&logoColor=white)
 
@@ -154,7 +154,7 @@ flowchart LR
 | 🟢 &nbsp;WhatsApp | **Flask + Twilio** | webhook, media over URL |
 | 🎮 &nbsp;Discord | **Flask + PyNaCl** | `/use` slash command, signed webhook |
 | 🌍 &nbsp;Translation | **deep-translator** (Google) | auto-detect → English · no key |
-| ✍️ &nbsp;Grammar | **Groq** (Llama 3.3 70B) | hosted, fast |
+| ✍️ &nbsp;Grammar | **Groq** (`openai/gpt-oss-20b`) | hosted, fast · swap with `GROQ_MODEL` |
 | 🎧 &nbsp;Speech → text | **Gladia** | hosted transcription |
 | 🗣️ &nbsp;Text → speech | **gTTS** | Google Text-to-Speech |
 
@@ -165,7 +165,7 @@ flowchart LR
 ## 📁 Project structure
 
 ```
-Lang_Helper/
+lang-helper-bot/
 ├── 🧠 engine.py             # the brain — language logic, platform-agnostic
 ├── 📨 telegram_bot.py       # adapter — Telegram (text + voice)
 ├── 🟢 whatsapp_bot.py       # adapter — WhatsApp via Twilio (text + voice)
@@ -173,6 +173,8 @@ Lang_Helper/
 ├── 🧩 register_command.py   # one-time — registers /use with Discord
 ├── 📦 requirements.txt
 ├── 🔐 .env.example          # template for your secrets (real .env is git-ignored)
+├── 🖼️ assets/               # banner and mascot
+├── 📄 LICENSE
 └── 🙈 .gitignore
 ```
 
@@ -208,6 +210,7 @@ cp .env.example .env
 # core
 GROQ_API_KEY=
 GLADIA_API_KEY=
+# GROQ_MODEL=openai/gpt-oss-20b   # optional
 
 # telegram
 TELEGRAM_TOKEN=
@@ -232,7 +235,7 @@ DISCORD_PUBLIC_KEY=
 | `TWILIO_*` | WhatsApp | [twilio.com](https://www.twilio.com) |
 | `DISCORD_*` | Discord | [Developer Portal](https://discord.com/developers/applications) |
 
-Translation needs no key.
+Translation needs no key. `GROQ_MODEL` is optional and defaults to `openai/gpt-oss-20b`.
 
 </details>
 
@@ -248,6 +251,10 @@ gunicorn discord_bot:app     # Discord   (webhook — needs a public URL)
 ```
 
 Telegram and WhatsApp handle voice; Discord is text via `/use`. The two webhook apps need a public URL (deploy them, or tunnel with ngrok for local testing). For Discord, register the command once with `python register_command.py`.
+
+Then point each platform at your host: Twilio's WhatsApp sandbox ("When a message comes in") at `https://<your-host>/whatsapp`, and the Discord app's **Interactions Endpoint URL** at `https://<your-host>/discord`. The Telegram bot registers its own webhook at `WEBHOOK_URL/<TELEGRAM_TOKEN>` when it starts.
+
+The WhatsApp bot checks Twilio's signature on every incoming message, so the sandbox URL must be exactly `PUBLIC_URL` followed by `/whatsapp`. If they differ (a trailing path, `http` instead of `https`, an old ngrok address), every message is rejected with a 403.
 
 </details>
 

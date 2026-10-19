@@ -72,7 +72,7 @@ def whatsapp():
         if is_voice:
             fname = f"reply_{uuid.uuid4().hex}.mp3"
             out_path = f"{AUDIO_DIR}/{fname}"
-            synthesize_speech(result["output"], out_path)
+            synthesize_speech(result["text"], out_path)  # speak the reply, not the latency line
             resp.message().media(f"{PUBLIC_URL}/audio/{fname}")
         else:
             resp.message(result["output"])

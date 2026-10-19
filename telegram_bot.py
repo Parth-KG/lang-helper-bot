@@ -27,7 +27,7 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await file.download_to_drive(in_path)
         text = transcribe_audio(in_path)
         result = process_text(text)
-        synthesize_speech(result["output"], out_path)
+        synthesize_speech(result["text"], out_path)  # speak the reply, not the latency line
         with open(out_path, "rb") as audio:
             await update.message.reply_voice(audio)
     except Exception as e:

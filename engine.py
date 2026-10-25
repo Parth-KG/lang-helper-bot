@@ -22,6 +22,10 @@ def correct_english(text: str) -> str:
     )
     return response.choices[0].message.content.strip().strip('"').strip()
 
+def transcribe_audio(file_path: str) -> str:
+    result = gladia.transcribe(file_path, options={"language_config": {"languages": ["en"]}})
+    return result.result.transcription.full_transcript.strip()
+
 def translate_with_groq(text: str) -> str:
     response = client.chat.completions.create(
         model=os.getenv("GROQ_MODEL", "openai/gpt-oss-20b"),
@@ -41,10 +45,6 @@ def to_english(text: str) -> str:
         # Google often refuses requests from shared cloud servers (TooManyRequests)
         print(f"Google Translate failed ({type(e).__name__}), using Groq instead")
         result = translate_with_groq(text)
-    return result.strip().strip('"').strip()
-
-def to_english(text: str) -> str:
-    result = GoogleTranslator(source="auto", target="en").translate(text)
     return result.strip().strip('"').strip()
 
 def synthesize_speech(text: str, output_path: str) -> str:
